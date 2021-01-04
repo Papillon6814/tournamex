@@ -4,6 +4,7 @@
 
 Elixir module for generating tournament brackets.
 We will add functions gradually.
+https://hexdocs.pm/tournamex/0.1.0/api-reference.html
 
 ## Installation
 ```elixir
