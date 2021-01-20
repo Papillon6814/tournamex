@@ -10,7 +10,7 @@ https://hexdocs.pm/tournamex/0.1.0/api-reference.html
 ```elixir
 defp deps do
   [
-    {:tournamex, "~> 0.1.0"}
+    {:tournamex, "~> 0.1.5"}
   ]
 end
 ```
