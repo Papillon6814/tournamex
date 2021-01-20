@@ -21,11 +21,31 @@ defmodule TournamexTest do
   end
 
   describe "initialize_match_list_with_fight_result/2" do
-    test "initialize_match_list_with_fight_result/2 with valid works fine" do
+    test "initialize_match_list_with_fight_result/2 with valid data works fine" do
       data = [1, 2, 3, 4, 5, 6]
       {:ok, matchlist} = Tournamex.generate_matchlist(data)
       assert l = Tournamex.initialize_match_list_with_fight_result(matchlist)
       refute l |> hd() |> hd() |> Map.get("is_loser")
+    end
+  end
+
+  describe "check_lose?/2" do
+    test "check_lose?/2 works fine with valid data (light check)" do
+      data = [1, 2, 3, 4, 5, 6]
+      {:ok, matchlist} = Tournamex.generate_matchlist(data)
+      l = Tournamex.initialize_match_list_with_fight_result(matchlist)
+      refute Tournamex.check_lose?(l, 2)
+    end
+  end
+
+  describe "renew_match_list/2" do
+    test "renew_match_list/2 with valid data works fine" do
+      data = [1, 2, 3, 4, 5, 6]
+      {:ok, matchlist} = Tournamex.generate_matchlist(data)
+      l = Tournamex.initialize_match_list_with_fight_result(matchlist)
+      assert new_list = Tournamex.renew_match_list_with_loser(l, 2)
+      assert Tournamex.check_lose?(new_list, 2)
+      refute Tournamex.check_lose?(new_list, 3)
     end
   end
 

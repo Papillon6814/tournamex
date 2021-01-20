@@ -60,6 +60,51 @@ defmodule Tournamex do
   end
 
   @doc """
+  Renew match list with loser.
+  """
+  def renew_match_list_with_loser(match_list, loser) when is_integer(loser) do
+    renew_match_list(match_list, loser)
+  end
+
+  defp renew_match_list(match_list, loser, result \\ []) do
+    Enum.reduce(match_list, result, fn match, acc ->
+      case match do
+        x when is_map(match) ->
+          if x["user_id"] == loser do
+            acc ++ [Map.put(x, "is_loser", true)]
+          else
+            acc ++ [x]
+          end
+        x when is_list(match) ->
+          acc ++ [renew_match_list(x, loser)]
+        x -> x
+      end
+    end)
+  end
+
+  @doc """
+  Check if the user has already lost.
+  """
+  def check_lose?(match_list, user_id) when is_integer(user_id) do
+    check?(match_list, user_id)
+  end
+
+  defp check?(match_list, user_id, result \\ false) do
+    Enum.reduce(match_list, result, fn match, acc ->
+      case match do
+        x when is_map(match) ->
+          if x["user_id"] == user_id do
+            x["is_loser"]
+          else
+            acc
+          end
+        x when is_list(match) -> check?(x, user_id, acc)
+        _ -> acc
+      end
+    end)
+  end
+
+  @doc """
   Delete losers from match list.
   """
   def delete_loser(list, loser) when is_integer(loser) do
