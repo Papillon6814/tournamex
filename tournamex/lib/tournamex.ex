@@ -27,19 +27,37 @@ defmodule Tournamex do
     shuffled = list |> Enum.shuffle()
     case(length(shuffled)) do
     1 ->
-      shuffled |> hd()
-    2 -> shuffled
+      hd(shuffled)
+    2 ->
+      shuffled
     _ ->
-      b = Enum.slice(shuffled, 0..trunc(length(shuffled)/2 -1))
-      |> generate()
+      b =
+        Enum.slice(shuffled, 0..trunc(length(shuffled)/2 -1))
+        |> generate()
 
-      c = Enum.slice(shuffled, trunc(length(shuffled)/2)..length(shuffled)-1)
-      |> generate()
+      c =
+        Enum.slice(shuffled, trunc(length(shuffled)/2)..length(shuffled)-1)
+        |> generate()
 
       [b,c]
     end
   end
   defp generate([]), do: {:error, "No entrants"}
+
+  @doc """
+  Initialize match list with fight result.
+  """
+  def initialize_match_list_with_fight_result(match_list, result \\ []) do
+    Enum.reduce(match_list, result, fn match, acc ->
+      case match do
+        x when is_integer(match) ->
+          acc ++ [%{"user_id" => x, "is_loser" => false}]
+        x when is_list(match) ->
+          acc ++ [initialize_match_list_with_fight_result(x)]
+        x -> x
+      end
+    end)
+  end
 
   @doc """
   Delete losers from match list.

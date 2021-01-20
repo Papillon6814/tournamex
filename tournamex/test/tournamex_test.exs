@@ -20,6 +20,15 @@ defmodule TournamexTest do
     end
   end
 
+  describe "initialize_match_list_with_fight_result/2" do
+    test "initialize_match_list_with_fight_result/2 with valid works fine" do
+      data = [1, 2, 3, 4, 5, 6]
+      {:ok, matchlist} = Tournamex.generate_matchlist(data)
+      assert l = Tournamex.initialize_match_list_with_fight_result(matchlist)
+      refute l |> hd() |> hd() |> Map.get("is_loser")
+    end
+  end
+
   describe "brackets" do
     test "brackets/1 works fine with valid list data of size 3" do
       match_list = [3, [1, 2]]
