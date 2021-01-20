@@ -137,6 +137,38 @@ defmodule Tournamex do
   @doc """
   Returns data which is presenting tournament brackets.
   """
+  def brackets_with_fight_result(match_list) do
+    {:ok, align_with_fight_result(match_list)}
+  end
+
+  defp align_with_fight_result(match_list, result \\ []) do
+    Enum.reduce(match_list, result, fn x, acc ->
+      case x do
+        x when is_list(x) ->
+          align_with_fight_result(x, acc)
+        x when is_map(x) ->
+          if hd(match_list) == x do
+            [fr(match_list) | acc]
+          else
+            acc
+          end
+        _ -> acc
+      end
+    end)
+  end
+
+  defp fr(list) do
+    Enum.reduce(list, [], fn element, acc ->
+      case element do
+        x when is_map(x) -> [x | acc]
+        _ -> [nil | acc]
+      end
+    end)
+  end
+
+  @doc """
+  Returns data which is presenting tournament brackets.
+  """
   def brackets(match_list) do
     {:ok, align(match_list)}
   end

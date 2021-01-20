@@ -49,6 +49,77 @@ defmodule TournamexTest do
     end
   end
 
+  describe "brackets with fight result" do
+    test "brackets_with_fight_result/1 works fine with valid list data of size 3" do
+      match_list = [
+        %{"user_id" => 3, "is_loser" => false},
+        [
+          %{"user_id" => 1, "is_loser" => false},
+          %{"user_id" => 2, "is_loser" => false}
+        ]
+      ]
+
+      assert Tournamex.brackets_with_fight_result(match_list) == {:ok,
+        [[%{"user_id" => 2, "is_loser" => false}, %{"user_id" => 1, "is_loser" => false}],
+        [nil, %{"user_id" => 3, "is_loser" => false}]]
+      }
+    end
+
+    test "brackets_with_fight_result/1 works fine with valid list data of size 4" do
+      match_list = [
+        [%{"user_id" => 1, "is_loser" => false}, %{"user_id" => 2, "is_loser" => false}],
+        [%{"user_id" => 3, "is_loser" => false}, %{"user_id" => 4, "is_loser" => false}]
+      ]
+
+      assert Tournamex.brackets_with_fight_result(match_list) == {:ok,
+        [[%{"user_id" => 4, "is_loser" => false}, %{"user_id" => 3, "is_loser" => false}],
+        [%{"user_id" => 2, "is_loser" => false}, %{"user_id" => 1, "is_loser" => false}]]
+      }
+    end
+
+    test "brackets_with_fight_result/1 works fine with valid list data of size 5" do
+      match_list = [
+        [%{"user_id" => 1, "is_loser" => false}, %{"user_id" => 2, "is_loser" => false}],
+        [%{"user_id" => 3, "is_loser" => false},
+        [%{"user_id" => 4, "is_loser" => false}, %{"user_id" => 5, "is_loser" => false}]]
+      ]
+      assert Tournamex.brackets_with_fight_result(match_list) == {:ok,
+        [[%{"user_id" => 5, "is_loser" => false}, %{"user_id" => 4, "is_loser" => false}],
+        [nil, %{"user_id" => 3, "is_loser" => false}],
+        [%{"user_id" => 2, "is_loser" => false}, %{"user_id" => 1, "is_loser" => false}]]
+      }
+    end
+
+    test "brackets_with_fight_result/1 works fine with valid list data of size 6" do
+      match_list = [
+        [%{"user_id" => 1, "is_loser" => false}, [%{"user_id" => 2, "is_loser" => false}, %{"user_id" => 3, "is_loser" => false}]],
+        [%{"user_id" => 4, "is_loser" => false}, [%{"user_id" => 5, "is_loser" => false}, %{"user_id" => 6, "is_loser" => false}]]
+      ]
+      assert Tournamex.brackets_with_fight_result(match_list) == {:ok,
+        [[%{"user_id" => 6, "is_loser" => false}, %{"user_id" => 5, "is_loser" => false}],
+        [nil, %{"user_id" => 4, "is_loser" => false}],
+        [%{"user_id" => 3, "is_loser" => false}, %{"user_id" => 2, "is_loser" => false}],
+        [nil, %{"user_id" => 1, "is_loser" => false}]]
+      }
+    end
+
+    test "brackets/1 works fine with valid list data of size 7" do
+      match_list = [
+        [%{"user_id" => 1, "is_loser" => false},
+        [%{"user_id" => 2, "is_loser" => false}, %{"user_id" => 3, "is_loser" => false}]],
+        [[%{"user_id" => 4, "is_loser" => false}, %{"user_id" => 5, "is_loser" => false}],
+        [%{"user_id" => 6, "is_loser" => false}, %{"user_id" => 7, "is_loser" => false}]]
+      ]
+
+      assert Tournamex.brackets_with_fight_result(match_list) == {:ok,
+        [[%{"user_id" => 7, "is_loser" => false}, %{"user_id" => 6, "is_loser" => false}],
+        [%{"user_id" => 5, "is_loser" => false}, %{"user_id" => 4, "is_loser" => false}],
+        [%{"user_id" => 3, "is_loser" => false}, %{"user_id" => 2, "is_loser" => false}],
+        [nil, %{"user_id" => 1, "is_loser" => false}]]
+      }
+    end
+  end
+
   describe "brackets" do
     test "brackets/1 works fine with valid list data of size 3" do
       match_list = [3, [1, 2]]
