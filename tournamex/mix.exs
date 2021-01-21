@@ -4,7 +4,7 @@ defmodule Tournamex.MixProject do
   def project do
     [
       app: :tournamex,
-      version: "0.1.8",
+      version: "0.1.9",
       elixir: "~> 1.9",
       description: "Simple package for managing tournament.",
       start_permanent: Mix.env() == :prod,

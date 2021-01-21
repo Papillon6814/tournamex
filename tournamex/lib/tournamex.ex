@@ -45,6 +45,18 @@ defmodule Tournamex do
   defp generate([]), do: {:error, "No entrants"}
 
   @doc """
+  Convert match list to list.
+  """
+  def match_list_to_list(match_list, result \\ []) do
+    Enum.reduce(match_list, result, fn match, acc ->
+      case match do
+        x when is_list(x) -> match_list_to_list(x, acc)
+        x  -> acc ++ [x]
+      end
+    end)
+  end
+
+  @doc """
   Initialize match list with fight result.
   """
   def initialize_match_list_with_fight_result(match_list, result \\ []) do
