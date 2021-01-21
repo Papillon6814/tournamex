@@ -105,6 +105,27 @@ defmodule Tournamex do
   end
 
   @doc """
+  Put value on bracket list.
+  The second argument 'key' should be the user id.
+  """
+  def put_value_on_brackets(match_list, key, value, result \\ []) when is_map(value) do
+    Enum.reduce(match_list, result, fn match, acc ->
+      case match do
+        x when is_list(x) ->
+          acc ++ [put_value_on_brackets(x, key, value)]
+        x when is_map(x) ->
+          if x["user_id"] == key do
+            acc ++ [Map.merge(x, value)]
+          else
+            acc ++ [x]
+          end
+        x ->
+          acc ++ [x]
+      end
+    end)
+  end
+
+  @doc """
   Delete losers from match list.
   """
   def delete_loser(list, loser) when is_integer(loser) do

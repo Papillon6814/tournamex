@@ -157,6 +157,42 @@ defmodule TournamexTest do
     end
   end
 
+  describe "put value on brackets" do
+    test "put_value_on_brackets/4 works fine with a valid data size of 3" do
+      match_list = [
+        %{"user_id" => 3, "is_loser" => false},
+        [
+          %{"user_id" => 1, "is_loser" => false},
+          %{"user_id" => 2, "is_loser" => false}
+        ]
+      ]
+
+      brackets = Tournamex.put_value_on_brackets(match_list, 2, %{"add" => "data"})
+      assert brackets == [
+        %{"user_id" => 3, "is_loser" => false},
+        [
+          %{"user_id" => 1, "is_loser" => false},
+          %{"user_id" => 2, "is_loser" => false, "add" => "data"}
+        ]
+      ]
+    end
+
+    test "put_value_on_brackets/4 works fine with a valid data size of 4" do
+      match_list = [
+        [%{"user_id" => 1, "is_loser" => false}, %{"user_id" => 2, "is_loser" => false}],
+        [%{"user_id" => 3, "is_loser" => false}, %{"user_id" => 4, "is_loser" => false}]
+      ]
+
+      brackets = Tournamex.put_value_on_brackets(match_list, 2, %{"add" => "data"})
+      assert brackets == [
+        [%{"user_id" => 1, "is_loser" => false},
+        %{"user_id" => 2, "is_loser" => false, "add" => "data"}],
+        [%{"user_id" => 3, "is_loser" => false},
+        %{"user_id" => 4, "is_loser" => false}]
+      ]
+    end
+  end
+
   describe "delete loser" do
     test "delete_loser/2 works fine with a valid data of 4 players" do
       list = [[1, 2], [3, 4]]
