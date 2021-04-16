@@ -87,6 +87,19 @@ defmodule TournamexTest do
       assert Tournamex.check_lose?(new_list, 2)
       refute Tournamex.check_lose?(new_list, 3)
     end
+
+    test "renew_match_list_with_loser/2 with valid data works fine" do
+      data = [
+        %{"user_id" => 3, "is_loser" => false},
+        [
+          %{"user_id" => 1, "is_loser" => false},
+          %{"user_id" => 2, "is_loser" => false}
+        ]
+      ]
+      assert new_list = Tournamex.renew_match_list_with_loser(data, 2)
+      assert Tournamex.check_lose?(new_list, 2)
+      refute Tournamex.check_lose?(new_list, 3)
+    end
   end
 
   describe "brackets with fight result" do
