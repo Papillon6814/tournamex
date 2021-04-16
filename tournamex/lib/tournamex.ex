@@ -46,14 +46,10 @@ defmodule Tournamex do
 
   @doc """
   Convert match list to list.
+  FIXME: 不要
   """
-  def match_list_to_list(match_list, result \\ []) do
-    Enum.reduce(match_list, result, fn match, acc ->
-      case match do
-        x when is_list(x) -> match_list_to_list(x, acc)
-        x  -> acc ++ [x]
-      end
-    end)
+  def match_list_to_list(match_list) do
+    List.flatten(match_list)
   end
 
   @doc """
