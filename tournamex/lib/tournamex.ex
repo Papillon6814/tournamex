@@ -159,6 +159,8 @@ defmodule Tournamex do
         [delete_loser([a, b], loser), c]
       [a, b] ->
         delete_loser([a, b], loser)
+      [a] when is_integer(a) ->
+        []
       _ -> raise "Bad Argument"
     end
   end
