@@ -102,6 +102,36 @@ defmodule TournamexTest do
     end
   end
 
+  describe "win_count_increment/2" do
+    test "win_count_increment/2 with valid data works fine" do
+      data = [
+        %{"user_id" => 3, "win_count" => 1},
+        [
+          %{"user_id" => 1, "win_count" => 0},
+          %{"user_id" => 2, "win_count" => 0}
+        ]
+      ]
+
+      assert new_list = Tournamex.win_count_increment(data, 1)
+      assert new_list == [
+        %{"user_id" => 3, "win_count" => 1},
+        [
+          %{"user_id" => 1, "win_count" => 1},
+          %{"user_id" => 2, "win_count" => 0}
+        ]
+      ]
+
+      assert new_list = Tournamex.win_count_increment(new_list, 1)
+      assert new_list == [
+        %{"user_id" => 3, "win_count" => 1},
+        [
+          %{"user_id" => 1, "win_count" => 2},
+          %{"user_id" => 2, "win_count" => 0}
+        ]
+      ]
+    end
+  end
+
   describe "brackets with fight result" do
     test "brackets_with_fight_result/1 works fine with valid list data of size 3" do
       match_list = [

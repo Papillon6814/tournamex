@@ -71,10 +71,10 @@ defmodule Tournamex do
   Renew match list with loser.
   """
   def renew_match_list_with_loser(match_list, loser) when is_integer(loser) do
-    renew_match_list(match_list, loser)
+    renew_defeat(match_list, loser)
   end
 
-  defp renew_match_list(match_list, loser, result \\ []) do
+  defp renew_defeat(match_list, loser, result \\ []) do
     Enum.reduce(match_list, result, fn match, acc ->
       case match do
         x when is_map(match) ->
@@ -84,7 +84,32 @@ defmodule Tournamex do
             acc ++ [x]
           end
         x when is_list(match) ->
-          acc ++ [renew_match_list(x, loser)]
+          acc ++ [renew_defeat(x, loser)]
+        x -> x
+      end
+    end)
+  end
+
+  @doc """
+  Win count increment.
+  """
+  def win_count_increment(match_list, user_id) when is_integer(user_id) do
+    renew_win_count(match_list, user_id)
+  end
+
+  defp renew_win_count(match_list, user_id, result \\ []) do
+    Enum.reduce(match_list, result, fn match, acc ->
+      case match do
+        x when is_map(match) ->
+          if x["user_id"] == user_id do
+            count = x["win_count"]
+            IO.inspect(x, label: :winc)
+            acc ++ [Map.put(x, "win_count", count+1)]
+          else
+            acc ++ [x]
+          end
+        x when is_list(match) ->
+          acc ++ [renew_win_count(x, user_id)]
         x -> x
       end
     end)
