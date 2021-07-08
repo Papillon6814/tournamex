@@ -68,6 +68,21 @@ defmodule Tournamex do
   end
 
   @doc """
+  Initialize match list of teams with fight result.
+  """
+  def initialize_match_list_of_team_with_fight_result(match_list, result \\ []) do
+    Enum.reduce(match_list, result, fn match, acc ->
+      case match do
+        x when is_integer(match) ->
+          acc ++ [%{"team_id" => x, "is_loser" => false}]
+        x when is_list(match) ->
+          acc ++ [initialize_match_list_of_team_with_fight_result(x)]
+        x -> x
+      end
+    end)
+  end
+
+  @doc """
   Renew match list with loser.
   """
   def renew_match_list_with_loser(match_list, loser) when is_integer(loser) do
