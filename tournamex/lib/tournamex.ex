@@ -161,10 +161,13 @@ defmodule Tournamex do
         x when is_list(x) ->
           acc ++ [put_value_on_brackets(x, key, value)]
         x when is_map(x) ->
-          if x["user_id"] == key do
-            acc ++ [Map.merge(x, value)]
-          else
-            acc ++ [x]
+          cond do
+            x["user_id"] == key ->
+              acc ++ [Map.merge(x, value)]
+            x["team_id"] == key ->
+              acc ++ [Map.merge(x, value)]
+            true ->
+              acc ++ [x]
           end
         x ->
           acc ++ [x]
