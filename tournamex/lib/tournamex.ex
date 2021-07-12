@@ -116,11 +116,15 @@ defmodule Tournamex do
     Enum.reduce(match_list, result, fn match, acc ->
       case match do
         x when is_map(match) ->
-          if x["user_id"] == user_id do
-            count = x["win_count"]
-            acc ++ [Map.put(x, "win_count", count+1)]
-          else
-            acc ++ [x]
+          cond do
+            x["user_id"] == user_id ->
+              count = x["win_count"]
+              acc ++ [Map.put(x, "win_count", count+1)]
+            x["team_id"] == user_id ->
+              count = x["win_count"]
+              acc ++ [Map.put(x, "win_count", count+1)]
+            true ->
+              acc ++ [x]
           end
         x when is_list(match) ->
           acc ++ [renew_win_count(x, user_id)]
