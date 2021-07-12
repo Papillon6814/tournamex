@@ -93,10 +93,13 @@ defmodule Tournamex do
     Enum.reduce(match_list, result, fn match, acc ->
       case match do
         x when is_map(match) ->
-          if x["user_id"] == loser do
-            acc ++ [Map.put(x, "is_loser", true)]
-          else
-            acc ++ [x]
+          cond do
+            x["user_id"] == loser ->
+              acc ++ [Map.put(x, "is_loser", true)]
+            x["team_id"] == loser ->
+              acc ++ [Map.put(x, "is_loser", true)]
+            true ->
+              acc ++ [x]
           end
         x when is_list(match) ->
           acc ++ [renew_defeat(x, loser)]
