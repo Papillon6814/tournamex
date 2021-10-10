@@ -8,6 +8,7 @@ defmodule Tournamex.MixProject do
       elixir: "~> 1.9",
       description: "Simple package for managing tournament.",
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       package: package(),
       deps: deps()
     ]
@@ -21,7 +22,8 @@ defmodule Tournamex.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ex_doc, "~> 0.22.0", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.22.0", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -30,6 +32,15 @@ defmodule Tournamex.MixProject do
       maintainers: ["Papillon6814"],
       licenses: ["MIT"],
       links: %{"Github" => "https://github.com/Papillon6814/tournamex"}
+    ]
+  end
+
+  defp aliases do
+    [
+      test: [
+        "dialyzer",
+        "test"
+      ]
     ]
   end
 end

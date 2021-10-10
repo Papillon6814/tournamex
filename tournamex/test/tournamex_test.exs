@@ -20,46 +20,6 @@ defmodule TournamexTest do
     end
   end
 
-  describe "match list to list" do
-    test "match_list_to_list/2 with valid integer data size of 3 works fine" do
-      match_list = [3, [1, 2]]
-      assert [3, 1, 2] == Tournamex.match_list_to_list(match_list)
-    end
-
-    test "match_list_to_list/2 with valid integer data size of 4 works fine" do
-      match_list = [[1, 2], [3, 4]]
-      assert [1, 2, 3, 4] == Tournamex.match_list_to_list(match_list)
-    end
-
-    test "match_list_to_list/2 with valid map data size of 3 works fine" do
-      match_list = [
-        %{"user_id" => 3, "is_loser" => false},
-        [
-          %{"user_id" => 1, "is_loser" => false},
-          %{"user_id" => 2, "is_loser" => false}
-        ]
-      ]
-
-      assert [%{"user_id" => 3, "is_loser" => false},
-      %{"user_id" => 1, "is_loser" => false},
-      %{"user_id" => 2, "is_loser" => false}
-      ] == Tournamex.match_list_to_list(match_list)
-    end
-
-    test "match_list_to_list/2 with valid map data size of 4 works fine" do
-      match_list = [
-        [%{"user_id" => 1, "is_loser" => false}, %{"user_id" => 2, "is_loser" => false}],
-        [%{"user_id" => 3, "is_loser" => false}, %{"user_id" => 4, "is_loser" => false}]
-      ]
-
-      assert [%{"user_id" => 1, "is_loser" => false},
-      %{"user_id" => 2, "is_loser" => false},
-      %{"user_id" => 3, "is_loser" => false},
-      %{"user_id" => 4, "is_loser" => false}
-      ] == Tournamex.match_list_to_list(match_list)
-    end
-  end
-
   describe "initialize_match_list_with_fight_result/2" do
     test "initialize_match_list_with_fight_result/2 with valid data works fine" do
       data = [1, 2, 3, 4, 5, 6]

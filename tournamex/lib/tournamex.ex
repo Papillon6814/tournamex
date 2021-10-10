@@ -9,48 +9,38 @@ defmodule Tournamex do
   @doc """
   Generates a matchlist.
   """
-  def generate_matchlist(list) do
-    unless is_list(list) do
-      {:error, "Argument is not list"}
-    else
-      list
-      |> generate()
-      |> case do
-        list when is_list(list) -> {:ok, list}
-        tuple when is_tuple(tuple) -> tuple
-        scala -> {:ok, [scala]}
-      end
+  def generate_matchlist(list) when is_list(list) do
+    list
+    |> generate()
+    |> case do
+      list when is_list(list) -> {:ok, list}
+      tuple when is_tuple(tuple) -> tuple
+      scala -> {:ok, [scala]}
     end
   end
+  def generate_matchlist(_), do: {:error, "Argument is not list"}
 
-  defp generate(list) when list != [] do
-    shuffled = list |> Enum.shuffle()
-    case(length(shuffled)) do
-    1 ->
-      hd(shuffled)
-    2 ->
-      shuffled
-    _ ->
-      b =
-        Enum.slice(shuffled, 0..trunc(length(shuffled)/2 -1))
-        |> generate()
+  defp generate(list) when length(list) >= 0 do
+    shuffled = Enum.shuffle(list)
 
-      c =
-        Enum.slice(shuffled, trunc(length(shuffled)/2)..length(shuffled)-1)
-        |> generate()
+    case (length(shuffled)) do
+      1 ->
+        hd(shuffled)
+      2 ->
+        shuffled
+      _ ->
+        b =
+          Enum.slice(shuffled, 0..trunc(length(shuffled)/2 -1))
+          |> generate()
 
-      [b,c]
+        c =
+          Enum.slice(shuffled, trunc(length(shuffled)/2)..length(shuffled)-1)
+          |> generate()
+
+        [b,c]
     end
   end
-  defp generate([]), do: {:error, "No entrants"}
-
-  @doc """
-  Convert match list to list.
-  FIXME: 不要
-  """
-  def match_list_to_list(match_list) do
-    List.flatten(match_list)
-  end
+  defp generate(_), do: {:error, "No entrants"}
 
   @doc """
   Initialize match list with fight result.
