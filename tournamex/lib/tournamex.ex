@@ -12,9 +12,9 @@ defmodule Tournamex do
   @spec generate_matchlist([integer()]) :: {:ok, [any()]} | {:error, String.t()}
   def generate_matchlist(list) when is_list(list) do
     case generate(list) do
-      list when is_list(list) -> {:ok, list}
+      list  when is_list(list)   -> {:ok, list}
       tuple when is_tuple(tuple) -> tuple
-      scala -> {:ok, [scala]}
+      scala                      -> {:ok, [scala]}
     end
   end
   def generate_matchlist(_), do: {:error, "Argument is not list"}
@@ -23,18 +23,18 @@ defmodule Tournamex do
   defp generate(list) when length(list) >= 0 do
     shuffled = Enum.shuffle(list)
 
-    case (length(shuffled)) do
-      1 ->
-        hd(shuffled)
-      2 ->
-        shuffled
+    case length(shuffled) do
+      1 -> hd(shuffled)
+      2 -> shuffled
       _ ->
         b =
-          Enum.slice(shuffled, 0..trunc(length(shuffled)/2 -1))
+          shuffled
+          |> Enum.slice(0..trunc(length(shuffled)/2 -1))
           |> generate()
 
         c =
-          Enum.slice(shuffled, trunc(length(shuffled)/2)..length(shuffled)-1)
+          shuffled
+          |> Enum.slice(trunc(length(shuffled)/2)..length(shuffled)-1)
           |> generate()
 
         [b,c]
@@ -66,7 +66,7 @@ defmodule Tournamex do
     Enum.reduce(match_list, result, fn match, acc ->
       case match do
         x when is_integer(match) ->
-          acc ++ [%{"team_id" => x, "is_loser" => false}]
+          acc ++ [%{"leader_id" => x, "is_loser" => false}]
         x when is_list(match) ->
           acc ++ [initialize_match_list_of_team_with_fight_result(x)]
         x -> x
@@ -87,18 +87,11 @@ defmodule Tournamex do
   defp renew_defeat(match_list, loser, result \\ []) do
     Enum.reduce(match_list, result, fn match, acc ->
       case match do
-        x when is_map(match) ->
-          cond do
-            x["user_id"] == loser ->
-              acc ++ [Map.put(x, "is_loser", true)]
-            x["team_id"] == loser ->
-              acc ++ [Map.put(x, "is_loser", true)]
-            true ->
-              acc ++ [x]
-          end
-        x when is_list(match) ->
-          acc ++ [renew_defeat(x, loser)]
-        x -> x
+        %{"user_id" => user_id} = x when user_id == loser       -> acc ++ [Map.put(x, "is_loser", true)]
+        %{"leader_id" => leader_id} = x when leader_id == loser -> acc ++ [Map.put(x, "is_loser", true)]
+        x when is_map(match)                                    -> acc ++ [x]
+        x when is_list(match)                                   -> acc ++ [renew_defeat(x, loser)]
+        x                                                       -> x
       end
     end)
   end
@@ -112,23 +105,14 @@ defmodule Tournamex do
   end
   def win_count_increment(match_list, _), do: match_list
 
-  defp renew_win_count(match_list, user_id, result \\ []) do
+  defp renew_win_count(match_list, id, result \\ []) do
     Enum.reduce(match_list, result, fn match, acc ->
       case match do
-        x when is_map(match) ->
-          cond do
-            x["user_id"] == user_id ->
-              count = x["win_count"]
-              acc ++ [Map.put(x, "win_count", count+1)]
-            x["team_id"] == user_id ->
-              count = x["win_count"]
-              acc ++ [Map.put(x, "win_count", count+1)]
-            true ->
-              acc ++ [x]
-          end
-        x when is_list(match) ->
-          acc ++ [renew_win_count(x, user_id)]
-        x -> x
+        %{"user_id" => user_id} = x when user_id == id       -> acc ++ [Map.put(x, "win_count", x["win_count"]+1)]
+        %{"leader_id" => leader_id} = x when leader_id == id -> acc ++ [Map.put(x, "win_count", x["win_count"]+1)]
+        x when is_map(match)                                 -> acc ++ [x]
+        x when is_list(match)                                -> acc ++ [renew_win_count(x, id)]
+        x                                                    -> x
       end
     end)
   end
@@ -169,15 +153,11 @@ defmodule Tournamex do
           acc ++ [put_value_on_brackets(x, key, value)]
         x when is_map(x) ->
           cond do
-            x["user_id"] == key ->
-              acc ++ [Map.merge(x, value)]
-            x["team_id"] == key ->
-              acc ++ [Map.merge(x, value)]
-            true ->
-              acc ++ [x]
+            x["user_id"] == key   -> acc ++ [Map.merge(x, value)]
+            x["leader_id"] == key -> acc ++ [Map.merge(x, value)]
+            :else                 -> acc ++ [x]
           end
-        x ->
-          acc ++ [x]
+        x -> acc ++ [x]
       end
     end)
   end
@@ -187,7 +167,7 @@ defmodule Tournamex do
   """
   @spec delete_loser([any()], [integer()] | integer()) :: [any()]
   def delete_loser(list, loser) when is_integer(loser) do
-    delete_loser(list, [loser])
+    __MODULE__.delete_loser(list, [loser])
   end
 
   def delete_loser([a, b], loser) when is_integer(a) and is_integer(b) do
@@ -197,14 +177,14 @@ defmodule Tournamex do
 
   def delete_loser(list, loser) do
     case list do
-      [[a, b], [c, d]] -> [delete_loser([a, b], loser), delete_loser([c, d], loser)]
+      [[a, b], [c, d]]                                -> [delete_loser([a, b], loser), delete_loser([c, d], loser)]
       [a, [b, c]] when is_integer(a) and [a] == loser -> [b, c]
-      [a, [b, c]] -> [a, delete_loser([b, c], loser)]
+      [a, [b, c]]                                     -> [a, delete_loser([b, c], loser)]
       [[a, b], c] when is_integer(c) and [c] == loser -> [a, b]
-      [[a, b], c] -> [delete_loser([a, b], loser), c]
-      [a, b] -> delete_loser([a, b], loser)
-      [a] when is_integer(a) -> []
-      a when is_integer(a) -> []
+      [[a, b], c]                                     -> [delete_loser([a, b], loser), c]
+      [a, b]                                          -> delete_loser([a, b], loser)
+      [a] when is_integer(a)                          -> []
+      a   when is_integer(a)                            -> []
       _ -> raise "Bad Argument"
     end
   end
@@ -220,15 +200,9 @@ defmodule Tournamex do
   defp align_with_fight_result(match_list, result \\ []) do
     Enum.reduce(match_list, result, fn x, acc ->
       case x do
-        x when is_list(x) ->
-          align_with_fight_result(x, acc)
-        x when is_map(x) ->
-          if hd(match_list) == x do
-            [fr(match_list) | acc]
-          else
-            acc
-          end
-        _ -> acc
+        x when is_list(x)                        -> align_with_fight_result(x, acc)
+        x when is_map(x) and hd(match_list) == x -> [fr(match_list) | acc]
+        _                                        -> acc
       end
     end)
   end
@@ -237,7 +211,7 @@ defmodule Tournamex do
     Enum.reduce(list, [], fn element, acc ->
       case element do
         x when is_map(x) -> [x | acc]
-        _ -> [nil | acc]
+        _                -> [nil | acc]
       end
     end)
   end
@@ -253,14 +227,10 @@ defmodule Tournamex do
   defp align(match_list, result \\ []) do
     Enum.reduce(match_list, result, fn x, acc ->
       case x do
-        x when is_list(x) ->
-          align(x, acc)
-        x when is_integer(x) and hd(match_list) == x ->
-          [ml(match_list) | acc]
-        x when is_integer(x) ->
-          acc
-        _ ->
-          raise "invalid list"
+        x when is_list(x)                            -> align(x, acc)
+        x when is_integer(x) and hd(match_list) == x -> [ml(match_list) | acc]
+        x when is_integer(x)                         -> acc
+        _                                            -> raise "invalid list"
       end
     end)
   end
@@ -270,7 +240,7 @@ defmodule Tournamex do
     Enum.reduce(list, [], fn element, acc ->
       case element do
         x when is_integer(x) -> [x | acc]
-        _ -> [nil | acc]
+        _                    -> [nil | acc]
       end
     end)
   end

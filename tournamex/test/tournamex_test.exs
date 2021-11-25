@@ -25,7 +25,11 @@ defmodule TournamexTest do
       data = [1, 2, 3, 4, 5, 6]
       {:ok, matchlist} = Tournamex.generate_matchlist(data)
       assert l = Tournamex.initialize_match_list_with_fight_result(matchlist)
-      refute l |> hd() |> hd() |> Map.get("is_loser")
+      l
+      |> hd()
+      |> hd()
+      |> Map.get("is_loser")
+      |> refute()
     end
   end
 
