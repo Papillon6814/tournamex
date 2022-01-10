@@ -7,6 +7,7 @@ defmodule Tournamex.RoundRobin do
   @doc """
   Generates a round robin match list.
   """
+  @spec generate_match_list([integer()]) :: {:ok, [any()]}
   def generate_match_list(list) when is_list(list) do
     w = 1
     {x, y} = gen_members(list)
