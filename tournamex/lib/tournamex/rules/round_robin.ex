@@ -45,6 +45,9 @@ defmodule Tournamex.RoundRobin do
       0..length(list_x)-1
       |> Enum.to_list()
       |> Enum.map(&"#{Enum.at(list_x, &1)}-#{Enum.at(list_y, &1)}")
+      |> Enum.map(fn match ->
+        {match, nil}
+      end)
 
     next_round(n, w+1, list_x, list_y, [new_matches | matches])
   end
