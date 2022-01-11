@@ -208,4 +208,26 @@ defmodule Tournamex.RoundRobinTest do
       ]
     end
   end
+
+  describe "count_win/2" do
+    match_list = [
+        [
+          {"10-30", 10},
+          {"20-40", 20}
+        ],
+        [
+          {"10-40", 10},
+          {"30-20", 20}
+        ],
+        [
+          {"10-20", 10},
+          {"40-30", 30}
+        ]
+      ]
+
+    assert RoundRobin.count_win(match_list, 10) === 3
+    assert RoundRobin.count_win(match_list, 20) === 2
+    assert RoundRobin.count_win(match_list, 30) === 1
+    assert RoundRobin.count_win(match_list, 40) === 0
+  end
 end

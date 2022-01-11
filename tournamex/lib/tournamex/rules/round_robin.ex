@@ -45,11 +45,22 @@ defmodule Tournamex.RoundRobin do
       0..length(list_x)-1
       |> Enum.to_list()
       |> Enum.map(&"#{Enum.at(list_x, &1)}-#{Enum.at(list_y, &1)}")
-      |> Enum.map(fn match ->
-        {match, nil}
-      end)
+      |> Enum.map(&({&1, nil}))
 
     next_round(n, w+1, list_x, list_y, [new_matches | matches])
   end
   defp next_round(_, _, _, _, matches), do: matches
+
+  @doc """
+  Returns win count.
+  """
+  @spec count_win([any()], integer() | String.t()) :: integer()
+  def count_win(match_list, id) when is_integer(id) do
+    match_list
+    |> List.flatten()
+    |> Enum.filter(fn {_, winner_id} ->
+      winner_id == id
+    end)
+    |> length()
+  end
 end
