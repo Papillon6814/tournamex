@@ -326,4 +326,78 @@ defmodule Tournamex.RoundRobinTest do
       ]
     end
   end
+
+  describe "is_current_matches_finished_all?" do
+    test "works 0" do
+      match_list = [
+        [
+          {"10-30", nil},
+          {"20-40", nil}
+        ],
+        [
+          {"10-40", nil},
+          {"30-20", nil}
+        ],
+        [
+          {"10-20", nil},
+          {"40-30", nil}
+        ]
+      ]
+
+      match_list = %{
+        "match_list" => match_list,
+        "current_match_index" => 0,
+      }
+
+      refute RoundRobin.is_current_matches_finished_all?(match_list)
+    end
+
+    test "works 1" do
+      match_list = [
+        [
+          {"10-30", nil},
+          {"20-40", 20}
+        ],
+        [
+          {"10-40", nil},
+          {"30-20", nil}
+        ],
+        [
+          {"10-20", nil},
+          {"40-30", nil}
+        ]
+      ]
+
+      match_list = %{
+        "match_list" => match_list,
+        "current_match_index" => 0,
+      }
+
+      refute RoundRobin.is_current_matches_finished_all?(match_list)
+    end
+
+    test "works both" do
+      match_list = [
+        [
+          {"10-30", 10},
+          {"20-40", 20}
+        ],
+        [
+          {"10-40", nil},
+          {"30-20", nil}
+        ],
+        [
+          {"10-20", nil},
+          {"40-30", nil}
+        ]
+      ]
+
+      match_list = %{
+        "match_list" => match_list,
+        "current_match_index" => 0,
+      }
+
+      assert RoundRobin.is_current_matches_finished_all?(match_list)
+    end
+  end
 end

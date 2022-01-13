@@ -67,6 +67,7 @@ defmodule Tournamex.RoundRobin do
   @doc """
   Insert winner id into match list.
   """
+  @spec insert_winner_id(map(), integer(), String.t()) :: any()
   def insert_winner_id(%{"match_list" => match_list, "current_match_index" => current_match_index}, winner_id, match) when is_binary(match) do
     match_list
     |> Enum.at(current_match_index)
@@ -80,5 +81,16 @@ defmodule Tournamex.RoundRobin do
       |> List.delete_at(current_match_index)
       |> List.insert_at(current_match_index, new_match_list)
     end)
+  end
+
+  @doc """
+  Checks if the matches of current_match_index has been finished all.
+  """
+  @spec is_current_matches_finished_all?(map()) :: boolean()
+  def is_current_matches_finished_all?(%{"match_list" => match_list, "current_match_index" => current_match_index}) do
+    match_list
+    |> Enum.at(current_match_index)
+    |> Enum.map(&elem(&1, 1))
+    |> Enum.all?(&(!is_nil(&1)))
   end
 end
