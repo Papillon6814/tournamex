@@ -52,7 +52,7 @@ defmodule Tournamex.RoundRobin do
   defp next_round(_, _, _, _, matches), do: matches
 
   @doc """
-  Returns win count.
+  Returns win count of a user.
   """
   @spec count_win([any()], integer() | String.t()) :: integer()
   def count_win(match_list, id) when is_integer(id) do
@@ -62,5 +62,23 @@ defmodule Tournamex.RoundRobin do
       winner_id == id
     end)
     |> length()
+  end
+
+  @doc """
+
+  """
+  def insert_winner_id(%{"match_list" => match_list, "current_match_index" => current_match_index}, winner_id, match) when is_binary(match) do
+    match_list
+    |> Enum.at(current_match_index)
+    |> Enum.map(fn {match_in_list, winner_id_in_list} ->
+      if match_in_list == match,
+        do:   {match_in_list, winner_id},
+        else: {match_in_list, winner_id_in_list}
+    end)
+    |> then(fn new_match_list ->
+      match_list
+      |> List.delete_at(current_match_index)
+      |> List.insert_at(current_match_index, new_match_list)
+    end)
   end
 end

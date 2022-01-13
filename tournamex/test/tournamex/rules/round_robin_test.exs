@@ -210,24 +210,120 @@ defmodule Tournamex.RoundRobinTest do
   end
 
   describe "count_win/2" do
-    match_list = [
+    test "works" do
+      match_list = [
+          [
+            {"10-30", 10},
+            {"20-40", 20}
+          ],
+          [
+            {"10-40", 10},
+            {"30-20", 20}
+          ],
+          [
+            {"10-20", 10},
+            {"40-30", 30}
+          ]
+        ]
+
+      assert RoundRobin.count_win(match_list, 10) === 3
+      assert RoundRobin.count_win(match_list, 20) === 2
+      assert RoundRobin.count_win(match_list, 30) === 1
+      assert RoundRobin.count_win(match_list, 40) === 0
+    end
+  end
+
+  describe "insert_winner_id" do
+    test "works with current index: 0" do
+      match_list = [
         [
-          {"10-30", 10},
-          {"20-40", 20}
+          {"10-30", nil},
+          {"20-40", nil}
         ],
         [
-          {"10-40", 10},
-          {"30-20", 20}
+          {"10-40", nil},
+          {"30-20", nil}
         ],
         [
-          {"10-20", 10},
-          {"40-30", 30}
+          {"10-20", nil},
+          {"40-30", nil}
         ]
       ]
 
-    assert RoundRobin.count_win(match_list, 10) === 3
-    assert RoundRobin.count_win(match_list, 20) === 2
-    assert RoundRobin.count_win(match_list, 30) === 1
-    assert RoundRobin.count_win(match_list, 40) === 0
+      match_list = %{
+        "match_list" => match_list,
+        "current_match_index" => 0,
+      }
+
+      assert RoundRobin.insert_winner_id(match_list, 40, "20-40") === [
+        [{"10-30", nil}, {"20-40", 40}],
+        [{"10-40", nil}, {"30-20", nil}],
+        [{"10-20", nil}, {"40-30", nil}]
+      ]
+      assert RoundRobin.insert_winner_id(match_list, 20, "20-40") === [
+        [{"10-30", nil}, {"20-40", 20}],
+        [{"10-40", nil}, {"30-20", nil}],
+        [{"10-20", nil}, {"40-30", nil}]
+      ]
+
+      match_list = [
+        [
+          {"10-30", nil},
+          {"20-40", 20}
+        ],
+        [
+          {"10-40", nil},
+          {"30-20", nil}
+        ],
+        [
+          {"10-20", nil},
+          {"40-30", nil}
+        ]
+      ]
+
+      match_list = %{
+        "match_list" => match_list,
+        "current_match_index" => 0,
+      }
+
+      assert RoundRobin.insert_winner_id(match_list, 10, "10-30") === [
+        [{"10-30", 10}, {"20-40", 20}],
+        [{"10-40", nil}, {"30-20", nil}],
+        [{"10-20", nil}, {"40-30", nil}]
+      ]
+    end
+
+    test "works with current index: 1" do
+      match_list = [
+        [
+          {"10-30", nil},
+          {"20-40", nil}
+        ],
+        [
+          {"10-40", nil},
+          {"30-20", nil}
+        ],
+        [
+          {"10-20", nil},
+          {"40-30", nil}
+        ]
+      ]
+
+      match_list = %{
+        "match_list" => match_list,
+        "current_match_index" => 1,
+      }
+
+      assert RoundRobin.insert_winner_id(match_list, 40, "10-40") === [
+        [{"10-30", nil}, {"20-40", nil}],
+        [{"10-40", 40}, {"30-20", nil}],
+        [{"10-20", nil}, {"40-30", nil}]
+      ]
+      assert RoundRobin.insert_winner_id(match_list, 20, "30-20") === [
+        [{"10-30", nil}, {"20-40", nil}],
+        [{"10-40", nil}, {"30-20", 20}],
+        [{"10-20", nil}, {"40-30", nil}]
+      ]
+    end
   end
 end

@@ -84,7 +84,7 @@ defmodule Tournamex do
           cond do
             x["user_id"] == loser -> acc ++ [Map.put(x, "is_loser", true)]
             x["team_id"] == loser -> acc ++ [Map.put(x, "is_loser", true)]
-            true                  -> acc ++ [x]
+            :else                 -> acc ++ [x]
           end
         x when is_list(match) -> acc ++ [renew_defeat(x, loser)]
         x                     -> x
@@ -111,7 +111,7 @@ defmodule Tournamex do
             x["team_id"] == user_id ->
               count = x["win_count"]
               acc ++ [Map.put(x, "win_count", count+1)]
-            true ->
+            :else ->
               acc ++ [x]
           end
         x when is_list(match) ->
