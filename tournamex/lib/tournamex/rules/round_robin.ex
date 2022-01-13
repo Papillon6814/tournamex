@@ -65,7 +65,7 @@ defmodule Tournamex.RoundRobin do
   end
 
   @doc """
-
+  Insert winner id into match list.
   """
   def insert_winner_id(%{"match_list" => match_list, "current_match_index" => current_match_index}, winner_id, match) when is_binary(match) do
     match_list
