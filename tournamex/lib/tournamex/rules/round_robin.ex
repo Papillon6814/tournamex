@@ -90,6 +90,14 @@ defmodule Tournamex.RoundRobin do
   def is_current_matches_finished_all?(%{"match_list" => match_list, "current_match_index" => current_match_index}) do
     match_list
     |> Enum.at(current_match_index)
+    |> Enum.filter(fn {match, _} ->
+      match
+      |> String.split("-")
+      |> Enum.reject(&is_nil(&1))
+      |> Enum.reject(&(&1 == ""))
+      |> length()
+      |> then(&(&1 == 2))
+    end)
     |> Enum.map(&elem(&1, 1))
     |> Enum.all?(&(!is_nil(&1)))
   end
