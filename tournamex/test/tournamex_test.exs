@@ -2,6 +2,14 @@ defmodule TournamexTest do
   use ExUnit.Case
   doctest Tournamex
 
+  describe "generate_matchlist_without_shuffle/1" do
+    test "generate_matchlist_without_shuffle/1 with valid data works fine" do
+      data = [1, 2, 3, 4, 5, 6]
+      assert {:ok, matchlist} = Tournamex.generate_matchlist_without_shuffle(data)
+      assert matchlist == [[1, [2, 3]], [4, [5, 6]]]
+    end
+  end
+
   describe "generate_matchlist/1" do
     test "generate_matchlist/1 with valid data works fine" do
       data = [1, 2, 3, 4, 5, 6]

@@ -7,6 +7,34 @@ defmodule Tournamex do
   """
 
   @doc """
+  Generates a matchlist without shuffle.
+  """
+  def generate_matchlist_without_shuffle(list) when is_list(list) do
+    case generate_without_shuffle(list) do
+      list when is_list(list)    -> {:ok, list}
+      tuple when is_tuple(tuple) -> tuple
+      scala                      -> {:ok, [scala]}
+    end
+  end
+
+  defp generate_without_shuffle(list) do
+    case list do
+      ml when length(ml) == 1 -> hd(ml)
+      ml when length(ml) == 2 -> ml
+      ml ->
+        b = ml
+          |> Enum.slice(0..trunc(length(ml)/2 -1))
+          |> generate_without_shuffle()
+
+        c = ml
+          |> Enum.slice(trunc(length(ml)/2)..length(ml)-1)
+          |> generate_without_shuffle()
+
+        [b,c]
+    end
+  end
+
+  @doc """
   Generates a matchlist.
   """
   @spec generate_matchlist([integer()]) :: {:ok, [any()]} | {:error, String.t()}
@@ -189,8 +217,7 @@ defmodule Tournamex do
   Returns data which is presenting tournament brackets.
   """
   @spec brackets_with_fight_result([any()]) :: {:ok, [any()]} | {:error, String.t()}
-  def brackets_with_fight_result(match_list),
-    do: {:ok, align_with_fight_result(match_list)}
+  def brackets_with_fight_result(match_list), do: {:ok, align_with_fight_result(match_list)}
 
   defp align_with_fight_result(match_list, result \\ []) do
     Enum.reduce(match_list, result, fn x, acc ->
