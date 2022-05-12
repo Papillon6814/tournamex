@@ -8,6 +8,12 @@ defmodule TournamexTest do
       assert {:ok, matchlist} = Tournamex.generate_matchlist_without_shuffle(data)
       assert matchlist == [[1, [2, 3]], [4, [5, 6]]]
     end
+
+    test"generate_matchlist_without_shuffle/2 with valid data size 9 works fine" do
+      data = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+      assert {:ok, matchlist} = Tournamex.generate_matchlist_without_shuffle(data)
+      assert matchlist == [[[1, 2], [3, 4]], [[5, 6], [7, [8, 9]]]]
+    end
   end
 
   describe "generate_matchlist/1" do
